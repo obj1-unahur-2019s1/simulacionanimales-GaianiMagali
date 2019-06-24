@@ -1,22 +1,70 @@
 import wollok.game.*
 import animales.*
+import comedero.*
 
 program animales {
-	// configuracion de pantalla
-	game.width(15)
-	game.height(15)
-
-	/*
-	 * agregamos personajes
-	 */ 
-	var animalActual = new Vaca()
-
-	/*
-	 * configuraciones de teclado
-	 */
 	
-	/*
-	 * arrancamos el juego
-	 */
-	 game.start()
+	/*----------configuracion de pantalla----------*/
+	game.title("Granja") 
+	game.width(10)
+	game.height(10)
+	game.ground("tierra.png")
+	
+	/*----------Objetos----------*/	
+	var animalActual = new Vaca()
+	game.addVisual(animalActual)
+	
+   
+	 var comedero1 = new Comedero()
+	 game.addVisual(comedero1)
+	//var comedero2 = new Comedero()
+	//var comederos = #{}
+	
+	//comederos.add(comedero1)
+	//comederos.add(comedero2)
+	
+		/*----------configuraciones de teclado----------*/	
+	
+	 keyboard.num1().onPressDo({ game.removeVisual(animalActual)
+		animalActual = new Vaca()
+		game.addVisual(animalActual)
+	})
+	keyboard.num2().onPressDo({ game.removeVisual(animalActual)
+		animalActual = new Gallina()
+		game.addVisual(animalActual)
+	})
+	
+	
+		// configuraciones de teclado
+	keyboard.c().onPressDo({ animalActual.comer(1) })
+	keyboard.p().onPressDo({ game.say(animalActual, animalActual.peso().toString()) })
+	keyboard.b().onPressDo({ animalActual.beber() })
+	keyboard.s().onPressDo({ if (animalActual.tieneSed()) {
+			game.say(animalActual, " tengo sed")
+		} else {
+			game.say(animalActual, " no tengo sed")
+		}
+	})
+	keyboard.h().onPressDo({ game.say( animalActual, if (animalActual.tieneHambre()){ "Tengo hambre"} else{"No tengo hambre"})
+		})
+	
+	
+	//teclado de movimientos
+	keyboard.up().onPressDo({animalActual.up()})
+	keyboard.down().onPressDo({animalActual.down()})
+	keyboard.left().onPressDo({animalActual.left()})
+	keyboard.right().onPressDo({animalActual.right()})
+		
+	//Colisiones
+	game.whenCollideDo(comedero1, { animal =>
+		animal.position(animal.position().down(1))
+		if (comedero1.puedeAtender(animal)) {
+			comedero1.atender(animal)
+			game.say(animal, "Rica la comida")
+		} else {
+			game.say(comedero1, "No te puedo atender")
+		}
+	})	 
+		 
+	game.start()
 }
